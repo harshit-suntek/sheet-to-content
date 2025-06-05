@@ -1,4 +1,6 @@
-// import { readFileSync, appendFileSync, writeFileSync } from 'fs';
+import { config } from "dotenv";
+config();
+
 import axios from 'axios';
 
 async function searchPlace(textQuery) {
@@ -24,9 +26,6 @@ async function searchPlace(textQuery) {
 }
 
 async function generatePlacesData(rawData) {
-  // const csvHeader = 'ID,Formatted Address,Latitude,Longitude,Display Name,Type\n';
-  // writeFileSync('results.csv', csvHeader);
-
   const results = [];
 
   for (let i = 1; i < rawData.length; i++) {
@@ -36,7 +35,6 @@ async function generatePlacesData(rawData) {
 
     if (responseFromGoogleAPI && responseFromGoogleAPI.places) {
       const place = responseFromGoogleAPI.places[0]; // Assuming the first response to be most accurate
-      // console.log(JSON.stringify(place, null, 2));
 
       const id = place.id;
       const formattedAddress = place.formattedAddress;
@@ -45,14 +43,12 @@ async function generatePlacesData(rawData) {
       const displayName = place.displayName?.text;
       const type = rawData[i][4].includes("On Premise") ? "bar" : "store";
       
-      // const csvRow = `${id},${formattedAddress},${latitude},${longitude},${displayName},${type}\n`;
-      // appendFileSync('results.csv', csvRow);
-
       results.push({ id, formattedAddress, latitude, longitude, displayName, type });
     }
+    console.log(i);
   }
 
-  // writeFileSync('results.json', JSON.stringify(jsonResults, null, 2));  
+  console.log("Place Data generated through Google Place API");
   return results;
 }
 

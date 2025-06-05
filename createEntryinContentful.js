@@ -1,24 +1,14 @@
 import { config } from "dotenv";
 config();
 
-import contentful from 'contentful-management';
-import fs from 'fs';
+import client from './contentful-client.js';
 
-const client = contentful.createClient({
-	accessToken: process.env.CMA_TOKEN,
-});
-
-// async function createEntries() {
 async function createEntries(placesData) {
 	try {
 		const space = await client.getSpace(process.env.SPACE_ID);
 		const environment = await space.getEnvironment(
 			process.env.ENVIRONMENT_ID
 		);
-
-		// const placesData = JSON.parse(
-		// 	fs.readFileSync('results.json', 'utf-8')
-		// );
 
 		for (const place of placesData) {
 			const {
@@ -61,5 +51,4 @@ async function createEntries(placesData) {
 	}
 }
 
-// createEntries();
 export default createEntries;

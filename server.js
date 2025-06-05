@@ -3,15 +3,33 @@ config();
 
 import express from "express";
 import generatePlacesData from "./retrieveGooglePlaceId.js";
-import createEntries from './createEntryinContentful.js';
-import deleteAllStockistEntries from './deleteEntriesFromContentful.js';
+import createEntries from "./createEntryinContentful.js";
+import deleteAllStockistEntries from "./deleteEntriesFromContentful.js";
 
 const app = express();
+
 const PORT = 3000;
+const BEARER_TOKEN = process.env.BEARER_SECRET_TOKEN;
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
-app.post("/receive-sheet-data", async (req, res) => {
+// Securing the requests
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (token !== BEARER_TOKEN) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+
+  next();
+}
+
+app.post("/receive-sheet-data", authenticateToken, async (req, res) => {
   const data = req.body;
 
   if (!data) {
@@ -20,12 +38,10 @@ app.post("/receive-sheet-data", async (req, res) => {
   
   const time = new Date();
   console.log("Recieved data at: ", time.toLocaleString());
+  res.status(202).send("Data received.");
 
   try {
     const placesData = await generatePlacesData(data);
-    
-    res.send("Data saved successfully");
-    console.log("Responded to the server the that data is recieved");
 
     console.log("--------------------------------");
     console.log("Now deleting the current entries");

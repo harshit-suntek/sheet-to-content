@@ -1,11 +1,7 @@
 import { config } from "dotenv";
 config();
 
-import contentful from 'contentful-management';
-
-const client = contentful.createClient({
-	accessToken: process.env.CMA_TOKEN,
-});
+import client from "./contentful-client.js";
 
 async function deleteAllStockistEntries() {
 	try {
@@ -35,24 +31,12 @@ async function deleteAllStockistEntries() {
 
 		console.log(`Found ${allItems.length} entries.`);
 
-		// let count = 0;
 		for (const item of allItems) {
-			// count++;
-			// console.log(`Processing entry ${count}: ${item.sys.id}`);
-			// console.log(`total entries: ${allItems.length}`);
-			// console.log(`Remaining entries: ${allItems.length - count}`);
-
-			// console.log(`Processing entry: ${item.sys.id}`);
-
 			if (item.isPublished()) {
-				// console.log(`Unpublishing entry: ${item.sys.id}`);
 				await item.unpublish();
-				// console.log(`Entry ${item.sys.id} unpublished.`);
 			}
 
-			// console.log(`Deleting entry: ${item.sys.id}`);
 			await environment.deleteEntry(item.sys.id);
-			// console.log(`Entry ${item.sys.id} unpublished and deleted.`);
 		}
 
 		console.log('All entries deleted successfully!');
@@ -61,5 +45,4 @@ async function deleteAllStockistEntries() {
 	}
 }
 
-// deleteAllStockistEntries();
 export default deleteAllStockistEntries;
