@@ -2,12 +2,14 @@
 
 [Google Sheet Url](https://docs.google.com/spreadsheets/d/1NSxBbwearRuE3HqgffsVLwvHLcAc-8MUb4oSsc4CW1g/edit?usp=sharing)
 
+[Current Deployment](https://sheet-to-content.onrender.com)
+
 ## Build Project
 
 - `npm install`
 - `npm start`
 
-## Steps for testing:
+## Steps for testing Locally:
 
 - Open the google sheet
 - Host your port `3000` with `clouflare/ngrok`
