@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 
 import express from "express";
-import main from "./retrieveGooglePlaceId.js";
+import generatePlacesData from "./retrieveGooglePlaceId.js";
 import createEntries from './createEntryinContentful.js';
 import deleteAllStockistEntries from './deleteEntriesFromContentful.js';
 
@@ -22,7 +22,7 @@ app.post("/receive-sheet-data", async (req, res) => {
   console.log("Recieved data at: ", time.toLocaleString());
 
   try {
-    await main(data);
+    const placesData = await generatePlacesData(data);
     
     res.send("Data saved successfully");
     console.log("Responded to the server the that data is recieved");
@@ -33,7 +33,7 @@ app.post("/receive-sheet-data", async (req, res) => {
 
     console.log("--------------------------------");
     console.log("Creating new entries");
-    await createEntries();
+    await createEntries(placesData);
 
   } catch (err) {
     console.error("Error saving data:", err);

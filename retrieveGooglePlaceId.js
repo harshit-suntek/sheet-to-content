@@ -1,4 +1,4 @@
-import { readFileSync, appendFileSync, writeFileSync } from 'fs';
+// import { readFileSync, appendFileSync, writeFileSync } from 'fs';
 import axios from 'axios';
 
 async function searchPlace(textQuery) {
@@ -23,14 +23,14 @@ async function searchPlace(textQuery) {
   }
 }
 
-async function main(data) {
-  const csvHeader = 'ID,Formatted Address,Latitude,Longitude,Display Name,Type\n';
-  writeFileSync('results.csv', csvHeader);
+async function generatePlacesData(rawData) {
+  // const csvHeader = 'ID,Formatted Address,Latitude,Longitude,Display Name,Type\n';
+  // writeFileSync('results.csv', csvHeader);
 
-  const jsonResults = [];
+  const results = [];
 
-  for (let i = 1; i < data.length; i++) {
-    const address = `${data[i][0]} ${data[i][1]} ${data[i][2]} ${data[i][3]} `;
+  for (let i = 1; i < rawData.length; i++) {
+    const address = `${rawData[i][0]} ${rawData[i][1]} ${rawData[i][2]} ${rawData[i][3]} `;
 
     const responseFromGoogleAPI = await searchPlace(address);
 
@@ -43,16 +43,17 @@ async function main(data) {
       const latitude = place.location.latitude;
       const longitude = place.location.longitude;
       const displayName = place.displayName?.text;
-      const type = data[i][4].includes("On Premise") ? "bar" : "store";
+      const type = rawData[i][4].includes("On Premise") ? "bar" : "store";
       
-      const csvRow = `${id},${formattedAddress},${latitude},${longitude},${displayName},${type}\n`;
-      appendFileSync('results.csv', csvRow);
+      // const csvRow = `${id},${formattedAddress},${latitude},${longitude},${displayName},${type}\n`;
+      // appendFileSync('results.csv', csvRow);
 
-      jsonResults.push({ id, formattedAddress, latitude, longitude, displayName, type });
+      results.push({ id, formattedAddress, latitude, longitude, displayName, type });
     }
   }
 
-  writeFileSync('results.json', JSON.stringify(jsonResults, null, 2));  
+  // writeFileSync('results.json', JSON.stringify(jsonResults, null, 2));  
+  return results;
 }
 
-export default main;
+export default generatePlacesData;
